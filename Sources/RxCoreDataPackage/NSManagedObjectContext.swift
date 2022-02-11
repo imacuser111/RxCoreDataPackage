@@ -8,7 +8,7 @@
 import Foundation
 import CoreData
 
-extension NSManagedObjectContext {
+public extension NSManagedObjectContext {
     /**
      Executes a fetch request and returns the fetched objects as an `Observable` array of `NSManagedObjects`.
      - parameter fetchRequest: an instance of `NSFetchRequest` to describe the search criteria used to retrieve data from a persistent store
@@ -46,7 +46,7 @@ extension NSManagedObjectContext {
 }
 
 
-extension NSManagedObjectContext {
+public extension NSManagedObjectContext {
     /**
      Creates and executes a fetch request and returns the fetched objects as an `Observable` array of `Persistable`.
      - parameter type: the `Persistable` concrete type; defaults to `Persistable`
