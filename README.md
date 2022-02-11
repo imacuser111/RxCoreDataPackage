@@ -11,6 +11,27 @@ RxCoreData
 
 [TOC]
 
+## SPM
+
+```shell=
+git clone http://192.168.12.29/Cheng-Hong/rxcoredatapackage
+```
+
+### Init
+
+```swift=
+// TODO: - for RxCoreDataPackage
+private let coreDataManager = CoreDataManager("Model")
+
+var managedObjectContext: NSManagedObjectContext {
+    coreDataManager.managedObjectContext
+}
+```
+
+上面程式碼中的"Model"是你的Data Model名稱，例如：
+
+![](https://imgur.com/g9boHWj.png)
+
 ## Create Data Model
 
 ![](https://imgur.com/V07AEQi.png)
