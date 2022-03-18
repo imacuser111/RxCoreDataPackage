@@ -47,6 +47,39 @@ public extension NSManagedObjectContext {
 
 
 public extension NSManagedObjectContext {
+    
+    /**
+     Creates, inserts, and returns a new `NSManagedObject` instance for the given `Persistable` concrete type (defaults to `Persistable`).
+     */
+    private func create<E: Persistable>(_ type: E.Type = E.self) -> E.T {
+        return NSEntityDescription.insertNewObject(forEntityName: E.entityName, into: self) as! E.T
+    }
+    
+    private func get<P: Persistable>(_ persistable: P) throws -> P.T? {
+        let fetchRequest: NSFetchRequest<P.T> = NSFetchRequest(entityName: P.entityName)
+        fetchRequest.predicate = persistable.predicate()
+        let result = (try self.execute(fetchRequest)) as! NSAsynchronousFetchResult<P.T>
+        return result.finalResult?.first
+    }
+    
+    /**
+     Attempts to retrieve  remove a `Persistable` object from a persistent store, and then attempts to commit that change or throws an error if unsuccessful.
+     - seealso: `Persistable`
+     - parameter persistable: a `Persistable` object
+     */
+    func delete<P: Persistable>(_ persistable: P) throws {
+        
+        if let entity = try get(persistable) {
+            self.delete(entity)
+            
+            do {
+                try entity.managedObjectContext?.save()
+            } catch let e {
+                print(e)
+            }
+        }
+    }
+    
     /**
      Creates and executes a fetch request and returns the fetched objects as an `Observable` array of `Persistable`.
      - parameter type: the `Persistable` concrete type; defaults to `Persistable`
@@ -66,5 +99,13 @@ public extension NSManagedObjectContext {
         
 //        return fetchData(fetchRequest).map { P.init(entity: $0) }
         return entities(fetchRequest: fetchRequest).map { P.init(entity: $0) }
+    }
+    
+    /**
+     Attempts to fetch and update (or create if not found) a `Persistable` instance. Will throw error if fetch fails.
+     - parameter persistable: a `Persistable` instance
+     */
+    func update<P: Persistable>(_ persistable: P) throws {
+        persistable.update(try get(persistable) ?? self.create(P.self))
     }
 }

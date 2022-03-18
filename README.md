@@ -42,6 +42,9 @@ var managedObjectContext: NSManagedObjectContext {
 - forResource: "Model" -> Model是你剛剛創建的Data Model名稱
 - "RxCoreData.sqlite" -> sqlite的名稱(自訂)
 
+<details>
+    <summary>Source Code</summary>
+
 ```swift=
 import Foundation
 import CoreData
@@ -91,10 +94,15 @@ class CoreDataManager {
     }()
 }
 ```
+    
+</details>
 
 ## Persistable
 
 - 將需要實例化的variable、function創建成Protocol
+
+<details>
+    <summary>Source Code</summary>
 
 ```swift=
 import Foundation
@@ -128,9 +136,14 @@ public extension Persistable {
 }
 ```
 
+</details>
+
 ## NSManagedObjectContext+Rx
 
 - 創建CoreDate Rx的方法
+
+<details>
+    <summary>Source Code</summary>
 
 ```swift=
 import Foundation
@@ -266,11 +279,16 @@ public extension Reactive where Base: NSManagedObjectContext {
     
 }
 ```
+    
+</details>
 
 ## NSManagedObjectContext
 
 - 雖然是RxCoreData，不過有時候只是需要取資料，卻都要通過Observer在存起來有點麻煩，所以另外創建了一個非Rx的讀取
 
+<details>
+    <summary>Source Code</summary>
+    
 ```swift=
 import Foundation
 import CoreData
@@ -336,12 +354,17 @@ extension NSManagedObjectContext {
     }
 }
 ```
+    
+</details>
 
 ## FetchedResultsControllerControllerEntityObserver
 
 - 將fetch request轉換成entities: [NSManagedObject]
 - 利用NSFetchedResultsControllerDelegate的controllerDidChangeContent去監聽，當有變化時發送onNext出去
 
+<details>
+    <summary>Source Code</summary>
+    
 ```swift=
 import Foundation
 import CoreData
@@ -394,12 +417,17 @@ public final class FetchedResultsControllerEntityObserver<T: NSManagedObject>: N
 
 extension FetchedResultsControllerEntityObserver : Disposable { }
 ```
+    
+</details>
 
 ## FetchedResultsControllerSectionObserver(目前未用到)
 
 - 將fetch request轉換成entities: [NSFetchedResultsSectionInfo]
 - 利用NSFetchedResultsControllerDelegate的controllerDidChangeContent去監聽，當有變化時發送onNext出去
 
+<details>
+    <summary>Source Code</summary>
+    
 ```swift=
 import Foundation
 import CoreData
@@ -445,6 +473,8 @@ public final class FetchedResultsControllerSectionObserver<T: NSManagedObject> :
 
 extension FetchedResultsControllerSectionObserver : Disposable { }
 ```
+    
+</details>
 
 ## Model
 
@@ -452,6 +482,9 @@ extension FetchedResultsControllerSectionObserver : Disposable { }
 
 [![](https://imgur.com/px2RuVV.png)](https://imgur.com/px2RuVV)
 
+<details>
+    <summary>Source Code</summary>
+    
 ```swift=
 import Foundation
 import CoreData
@@ -536,6 +569,8 @@ extension LoginData: Persistable {
 }
 ```
 
+</details>
+
 ## How to use
 
 ### Fetch
@@ -547,20 +582,47 @@ private var loginData = CoreDataManager.shared.managedObjectContext.entities(Log
 ```
 
 - RxSwift
-
+- predicate -> 篩選條件(optional)
+- sortDescriptors -> 排序方法(optional)
+    
 ```swift=
-CoreDataManager.shared.managedObjectContext.rx.entities(LoginData.self).bind {
-    print("LoginData: \($0)")
-}.disposed(by: disposeBag)
+CoreDataManager.shared.managedObjectContext
+    .rx
+    .entities(Event.self,
+              predicate: NSPredicate(format: "%K == %@", "id", "123"),
+              sortDescriptors: [NSSortDescriptor(key: "date", ascending: false)])
+    .bind {
+        print("LoginData: \($0)")
+    }.disposed(by: disposeBag)
 ```
 
 ### Create or update
+    
+- Swift
+    
+```swift=
+_ = try? CoreDataManager.shared.managedObjectContext.update(loginData)
+```
+    
+- RxSwift
 
 ```swift=
 _ = try? CoreDataManager.shared.managedObjectContext.rx.update(loginData)
 ```
 
 ### delete
+    
+- Swift
+    
+```swift=
+do {
+    try CoreDataManager.shared.managedObjectContext.delete(loginData)
+} catch {
+    print(error)
+}
+```
+
+- RxSwift    
 
 ```swift=
 do {
@@ -577,6 +639,14 @@ do {
 [![](https://imgur.com/LgZk23r.png)](https://imgur.com/LgZk23r)
 
 - 解決方法：
+
+打開專案Folder找到剛剛創建的Data Model，並顯示套件內容
+
+[![](https://imgur.com/NGVO29P.png)](https://imgur.com/NGVO29P)
+    
+打開contents
+    
+[![](https://imgur.com/QCX7ycM.png)](https://imgur.com/QCX7ycM)
 
 把紅框的變數整個砍掉之後就不會再出現這個警告了
 
