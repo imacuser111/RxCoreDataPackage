@@ -28,7 +28,7 @@ public final class CoreDataManager {
         var failureReason = "There was an error creating or loading the application's saved data."
         
         do {
-            try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: nil)
+            try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: self.addPersistentStoreOptions)
         } catch {
             var dict = [String: Any]()
             dict[NSLocalizedDescriptionKey] = "Failed to initialize the application's saved data"
@@ -52,7 +52,10 @@ public final class CoreDataManager {
     
     private var resource: String
     
-    public init(_ forResource: String) {
+    private var addPersistentStoreOptions: [AnyHashable : Any]?
+    
+    public init(_ forResource: String, addPersistentStoreOptions: [AnyHashable : Any]? = nil) {
         resource = forResource
+        self.addPersistentStoreOptions = addPersistentStoreOptions
     }
 }
