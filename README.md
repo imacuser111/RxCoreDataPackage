@@ -651,6 +651,25 @@ do {
 把紅框的變數整個砍掉之後就不會再出現這個警告了
 
 [![](https://imgur.com/GNpJM83.png)](https://imgur.com/GNpJM83)
+    
+## CoreData version
+    
+如果遇到上版後，卻有新的Model要加新增，就必須先創建一個新的version
+    
+[![](https://imgur.com/6O0nEy4.png)](https://imgur.com/6O0nEy4)
+    
+選擇新的model
+
+[![](https://imgur.com/f1mNmu2.png)](https://imgur.com/f1mNmu2)
+    
+並且添加addPersistentStoreOptions
+    
+``` swift=
+static let coreDataManager = CoreDataManager("Model", addPersistentStoreOptions: [
+    NSMigratePersistentStoresAutomaticallyOption: true,
+    NSInferMappingModelAutomaticallyOption: true
+])
+```
 
 ## 參考資料
 
